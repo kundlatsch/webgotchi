@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Webgotchi</title>
+  <link rel="stylesheet" href="/game.css">
+</head>
+<body>
+
+  <!-- ===== CREATION SCREEN ===== -->
+  <div id="screen-create" class="screen">
+    <div class="create-card">
+      <h1 class="create-title">New Webgotchi</h1>
+      <p class="create-subtitle">Choose a name and an emoji for your new pet</p>
+
+      <label class="field-label" for="input-name">Name</label>
+      <input type="text" id="input-name" class="text-input" maxlength="12" placeholder="Type a name..." autocomplete="off">
+
+      <label class="field-label">Emoji</label>
+      <div id="emoji-grid" class="emoji-grid"></div>
+
+      <button id="btn-create" class="btn btn-primary btn-block" disabled>Create</button>
+
+      <p class="create-hint">Or load a save file:</p>
+      <button id="btn-load-create" class="btn btn-outline btn-block">Load File</button>
+    </div>
+  </div>
+
+  <!-- ===== GAME SCREEN ===== -->
+  <div id="screen-game" class="screen hidden">
+
+    <header class="game-header">
+      <div class="header-left">
+        <span id="header-emoji" class="header-pet-emoji"></span>
+        <span id="header-name" class="header-pet-name"></span>
+      </div>
+      <span id="header-age" class="header-age"></span>
+    </header>
+
+    <!-- Message Area -->
+    <div id="message-bar" class="message-bar">
+      <span id="message-text"></span>
+    </div>
+
+    <!-- Main Area: buttons around webgotchi -->
+    <div class="main-area">
+      <div class="action-ring">
+        <!-- row 1 -->
+        <button class="act-btn" id="btn-feed" data-action="feed">
+          <span class="act-icon">🍕</span><span class="act-label">Feed</span>
+        </button>
+        <div class="act-spacer"></div>
+        <button class="act-btn" id="btn-play" data-action="play">
+          <span class="act-icon">🎮</span><span class="act-label">Play</span>
+        </button>
+
+        <!-- row 2 -->
+        <button class="act-btn" id="btn-bath" data-action="bath">
+          <span class="act-icon">🚿</span><span class="act-label">Bath</span>
+        </button>
+
+        <div class="pet-center">
+          <div id="thought-bubble" class="thought-bubble hidden">
+            <span id="thought-emoji"></span>
+          </div>
+          <div id="pet-display" class="pet-display">
+            <span id="pet-emoji" class="pet-emoji"></span>
+          </div>
+          <div id="status-icons" class="status-icons"></div>
+        </div>
+
+        <button class="act-btn" id="btn-study" data-action="study">
+          <span class="act-icon">📚</span><span class="act-label">Study</span>
+        </button>
+
+        <!-- row 3 -->
+        <button class="act-btn" id="btn-heal" data-action="heal">
+          <span class="act-icon">💊</span><span class="act-label">Heal</span>
+        </button>
+        <div class="act-spacer"></div>
+        <button class="act-btn" id="btn-sleep" data-action="sleep">
+          <span class="act-icon">😴</span><span class="act-label">Sleep</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-panel">
+      <div class="stat-row">
+        <span class="stat-label">🍔 Hunger</span>
+        <div class="stat-bar"><div class="stat-fill" id="bar-hunger"></div></div>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">😊 Happy</span>
+        <div class="stat-bar"><div class="stat-fill" id="bar-happiness"></div></div>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">⚡ Energy</span>
+        <div class="stat-bar"><div class="stat-fill" id="bar-energy"></div></div>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">❤️ Health</span>
+        <div class="stat-bar"><div class="stat-fill" id="bar-health"></div></div>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">🧼 Hygiene</span>
+        <div class="stat-bar"><div class="stat-fill" id="bar-hygiene"></div></div>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">🧠 Smart</span>
+        <div class="stat-bar"><div class="stat-fill" id="bar-intelligence"></div></div>
+      </div>
+    </div>
+
+    <!-- Save Area -->
+    <div class="save-area">
+      <p class="save-warning">Progress is saved locally. Save a file to make sure you don't lose it!</p>
+      <div class="save-btns">
+        <button id="btn-save" class="btn btn-outline">Save File</button>
+        <button id="btn-load" class="btn btn-outline">Load File</button>
+        <button id="btn-reset" class="btn btn-danger-outline">Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== OVERLAY: FEED MENU ===== -->
+  <div id="overlay-feed" class="overlay hidden" role="dialog" aria-label="Feed menu">
+    <div class="overlay-card overlay-card--wide">
+      <h2 class="overlay-title">Feed</h2>
+      <div id="food-grid" class="food-grid"></div>
+      <button class="btn btn-outline btn-block overlay-close" data-close="overlay-feed">Close</button>
+    </div>
+  </div>
+
+  <!-- ===== OVERLAY: PLAY MENU ===== -->
+  <div id="overlay-play" class="overlay hidden" role="dialog" aria-label="Play menu">
+    <div class="overlay-card">
+      <h2 class="overlay-title">Play</h2>
+      <div class="minigame-options">
+        <button class="minigame-pick" id="btn-mg-frisbee">
+          <span class="mg-icon">🥏</span>
+          <span class="mg-name">Frisbee Catch</span>
+          <span class="mg-desc">Press at the right moment!</span>
+        </button>
+        <button class="minigame-pick" id="btn-mg-dodge">
+          <span class="mg-icon">⚽</span>
+          <span class="mg-name">Dodge Ball</span>
+          <span class="mg-desc">Dodge the falling balls!</span>
+        </button>
+      </div>
+      <button class="btn btn-outline btn-block overlay-close" data-close="overlay-play">Close</button>
+    </div>
+  </div>
+
+  <!-- ===== OVERLAY: MINIGAME FRISBEE ===== -->
+  <div id="overlay-frisbee" class="overlay hidden" role="dialog" aria-label="Frisbee minigame">
+    <div class="overlay-card overlay-card--game">
+      <div class="mg-header">
+        <h2 class="overlay-title">Frisbee Catch</h2>
+        <span id="frisbee-score" class="mg-score">0 / 5</span>
+      </div>
+      <p id="frisbee-instruction" class="mg-instruction">Press CATCH when the frisbee is in the green zone!</p>
+      <div id="frisbee-field" class="frisbee-field">
+        <div id="frisbee-zone" class="frisbee-zone"></div>
+        <div id="frisbee-disc" class="frisbee-disc">🥏</div>
+      </div>
+      <button id="btn-frisbee-catch" class="btn btn-primary btn-block mg-action-btn">Catch!</button>
+      <button id="btn-frisbee-close" class="btn btn-outline btn-block overlay-close hidden">Done</button>
+    </div>
+  </div>
+
+  <!-- ===== OVERLAY: MINIGAME DODGE ===== -->
+  <div id="overlay-dodge" class="overlay hidden" role="dialog" aria-label="Dodge ball minigame">
+    <div class="overlay-card overlay-card--game">
+      <div class="mg-header">
+        <h2 class="overlay-title">Dodge Ball</h2>
+        <span id="dodge-score" class="mg-score">Score: 0</span>
+      </div>
+      <p id="dodge-instruction" class="mg-instruction">Use buttons or arrow keys to dodge!</p>
+      <div id="dodge-field" class="dodge-field">
+        <div id="dodge-lanes" class="dodge-lanes"></div>
+      </div>
+      <div class="dodge-controls">
+        <button id="btn-dodge-left" class="btn btn-outline dodge-dir-btn">⬅️</button>
+        <button id="btn-dodge-right" class="btn btn-outline dodge-dir-btn">➡️</button>
+      </div>
+      <button id="btn-dodge-close" class="btn btn-outline btn-block overlay-close hidden">Done</button>
+    </div>
+  </div>
+
+  <!-- ===== OVERLAY: DEATH ===== -->
+  <div id="overlay-death" class="overlay hidden" role="dialog" aria-label="Pet died">
+    <div class="overlay-card">
+      <div class="death-emoji">🪦</div>
+      <h2 class="overlay-title">Your pet has passed away...</h2>
+      <p class="death-text" id="death-text"></p>
+      <button id="btn-new-pet" class="btn btn-primary btn-block">Create New Pet</button>
+    </div>
+  </div>
+
+  <!-- ===== OVERLAY: CONFIRM RESET ===== -->
+  <div id="overlay-confirm" class="overlay hidden" role="dialog" aria-label="Confirm reset">
+    <div class="overlay-card">
+      <h2 class="overlay-title">Reset?</h2>
+      <p class="confirm-text">This will erase your current pet forever. Are you sure?</p>
+      <div class="confirm-btns">
+        <button id="btn-confirm-yes" class="btn btn-danger-outline">Yes, reset</button>
+        <button id="btn-confirm-no" class="btn btn-outline">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- hidden file input -->
+  <input type="file" id="file-input" accept=".tama,.txt" style="display:none">
+
+  <script src="/game.js"></script>
+</body>
+</html>
